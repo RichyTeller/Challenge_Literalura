@@ -10,3 +10,4 @@ public record Datos(
         @JsonAlias("results") List<DatosLibros> libros
 ) {
 }
+

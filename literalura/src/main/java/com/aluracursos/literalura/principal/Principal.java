@@ -1,7 +1,6 @@
 package com.aluracursos.literalura.principal;
 
 import com.aluracursos.literalura.model.Datos;
-import com.aluracursos.literalura.model.DatosLibros;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
@@ -17,14 +16,15 @@ public class Principal {
         var opcion = -1;
         while (opcion != 0){
             var menu = """
-                    1 - Buscar libros
+                    1 - Buscar libro por titulo
+                    2 - Listar libros registrados
                     """;
             System.out.println(menu);
             opcion = teclado.nextInt();
             teclado.nextLine();
             switch (opcion) {
                 case 1:
-                    buscarLibro();
+                    buscarLibroPorTitulo();
                     break;
                 case 2:
                     System.out.println("Hola");
@@ -32,9 +32,10 @@ public class Principal {
             }
         }
     }
-    private void buscarLibro(){
-        var json = consumoAPI.obtenerDatosApi(URL_BASE);
-        System.out.println(json);
+    private void buscarLibroPorTitulo(){
+        System.out.println("Que libro desea buscar");
+        var busquedaUser = teclado.nextLine();
+        var json = consumoAPI.obtenerDatosApi(URL_BASE + "?search=" + busquedaUser.replace(" ","+"));
         var datos = conversor.obtenerDatos(json, Datos.class);
         System.out.println(datos);
     }
