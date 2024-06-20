@@ -51,8 +51,6 @@ public class Principal {
         Optional<DatosLibros> libroBuscado = datosBusqueda.libros().stream()
                 .filter(l -> l.titulo().toUpperCase().contains(busquedaUser.toUpperCase()))
                 .findFirst();
-//        var nuevoLibro = conversor.obtenerDatos(json, Libros.class);
-//        System.out.println(nuevoLibro);
         if(libroBuscado.isPresent()){
             System.out.println(
                     "\n------------- LIBRO 📚  --------------" +
