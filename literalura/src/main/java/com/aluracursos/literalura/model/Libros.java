@@ -2,8 +2,6 @@ package com.aluracursos.literalura.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "libros")
 public class Libros {
@@ -13,13 +11,13 @@ public class Libros {
     @Column(unique = true)
     private String titulo;
     private String autor;
-    private List<String> idiomas;
+    private String idiomas;
     private Integer numeroDeDescargas;
 
     public Libros(DatosLibros datosLibros){
         this.titulo = datosLibros.titulo();
         this.autor = datosLibros.autor().get(0).name();
-        this.idiomas = datosLibros.idiomas();
+        this.idiomas = datosLibros.idiomas().get(0).toUpperCase();
         this.numeroDeDescargas = datosLibros.numeroDeDescargas();
     }
 
@@ -40,7 +38,7 @@ public class Libros {
     }
 
 
-    public List<String> getIdiomas() {
+    public String getIdiomas() {
         return idiomas;
     }
 
