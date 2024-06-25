@@ -2,7 +2,7 @@
 LiterAlura es un catálogo de libros interactivo que permite a los usuarios buscar libros y autores a través de una API específica y guardar los resultados en una base de datos relacional.
 
 Descripción
-Este proyecto tiene como objetivo interactuar con los usuarios a través de la consola, proporcionando 9 opciones de interacción. Los libros se buscan a través de la API de Gutendex.
+Este proyecto tiene como objetivo interactuar con los usuarios a través de la consola, proporcionando 5 opciones de interacción. Los libros se buscan a través de la API de Gutendex.
 
 Estructura del Proyecto LiterAlura
 El proyecto se divide en varios paquetes para mantenerlo modular:
@@ -18,9 +18,6 @@ Listar autores registrados.
 Listar autores vivos en un determinado año.
 Listar libros por idioma.
 Listar libros por título.
-Listar autores por nombre.
-Buscar los 5 libros más populares.
-Mostrar estadísticas de la base de datos.
 Tecnologías utilizadas
 Java
 Spring Boot
