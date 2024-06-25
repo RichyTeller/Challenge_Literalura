@@ -7,10 +7,7 @@ import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 public class Principal {
     private Scanner teclado = new Scanner(System.in);
@@ -36,12 +33,18 @@ public class Principal {
                     2 - Listar libros registrados
                     3 - Listar autores
                     4 - Listar autores vivos en un determinado año
-                    5 - 
+                    5 - Listar libros por idioma
                     0 - Salir
                     """;
             System.out.println(menu);
-            opcion = teclado.nextInt();
-            teclado.nextLine(); // Limpiar el buffer de entrada
+            try {
+                opcion = teclado.nextInt();
+                teclado.nextLine(); // Limpiar el buffer de entrada después de nextInt()
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada no válida. Introduzca una opcion valida");
+                teclado.nextLine(); // Limpiar el buffer de entrada para evitar bucle infinito
+                continue;
+            }
 
             switch (opcion) {
                 case 1:
@@ -55,6 +58,9 @@ public class Principal {
                     break;
                 case 4:
                     getFechaAutor();
+                    break;
+                case 5:
+                    buscarLibrosPorIdioma();
                     break;
                 case 0:
                     System.out.println("Saliendo del programa...");
@@ -200,41 +206,70 @@ public class Principal {
 
     private List<Autores> getFechaAutor() {
         System.out.println("Ingrese un año para ver los autores vivos de la época: ");
-        int year = teclado.nextInt();
-        teclado.nextLine(); // Limpiar el buffer de entrada
 
-        // Utiliza la consulta personalizada para obtener autores junto con sus libros
-        List<Autores> autores = repositorioAutores.findAutoresByFecha(year);
+        List<Autores> autores = null;
+        try {
+            int year = teclado.nextInt();
+            teclado.nextLine(); // Limpiar el buffer de entrada después de nextInt()
 
-        // Filtrar y mostrar los autores
-        for (Autores autor : autores) {
-            // Construir la lista de títulos de libros del autor actual
-            List<String> titulosLibros = new ArrayList<>();
-            autor.getLibros().forEach(libro -> {
-                titulosLibros.add(libro.getTitulo()); // Agregar el título de cada libro a la lista
-            });
+            autores = repositorioAutores.findAutoresByFecha(year);
 
-            // Utilizar String.join para concatenar los títulos de los libros en una sola cadena, separados por comas
-            // String.join toma dos argumentos: el delimitador (", ") y la colección de elementos (titulosLibros)
-            // Esto produce una cadena en el formato "titulo1, titulo2, ..."
-            String librosConcatenados = String.join(", ", titulosLibros);
+            if (autores.isEmpty()) {
+                System.out.println("No hay autores registrados con el año de: " + year);
+            } else {
+                autores.forEach(autor -> {
+                    List<String> titulosLibros = new ArrayList<>();
+                    autor.getLibros().forEach(libro -> {
+                        titulosLibros.add(libro.getTitulo());
+                    });
 
-            // Imprimir la información del autor incluyendo la lista de títulos de libros en una sola línea
-            System.out.println(
-                    "\nAutor vivo en el año de: " + year +
-                            "\n--------------------------------------" +
-                            "\nAutor: " + autor.getNombre() +
-                            "\nFecha de nacimiento: " + autor.getFechaNacimiento() +
-                            "\nFecha de fallecimiento: " + autor.getFechaFallecimiento() +
-                            // Incluir la cadena concatenada de libros en la línea de salida
-                            "\nLibros: [" + librosConcatenados + "]" +
-                            "\n--------------------------------------\n"
-            );
+                    String librosConcatenados = String.join(", ", titulosLibros);
+
+                    System.out.println(
+                            "\nAutor vivo en el año de: " + year +
+                                    "\n--------------------------------------" +
+                                    "\nAutor: " + autor.getNombre() +
+                                    "\nFecha de nacimiento: " + autor.getFechaNacimiento() +
+                                    "\nFecha de fallecimiento: " + autor.getFechaFallecimiento() +
+                                    "\nLibros: [" + librosConcatenados + "]" +
+                                    "\n--------------------------------------\n"
+                    );
+                });
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Año no válido.");
+            teclado.nextLine(); // Limpiar el buffer de entrada en caso de excepción
         }
-
         return autores;
     }
 
+    private void buscarLibrosPorIdioma() {
+        System.out.println("\nIngrese el idioma para buscar los libros: " +
+                "\n--------------------------------------" +
+                "\nes - español" +
+                "\nen - inglés" +
+                "\nfr - francés" +
+                "\npt - portugués" +
+                "\n--------------------------------------\n"
+        );
 
+        String idiomas = teclado.nextLine().toUpperCase(); // Obtener el idioma ingresado por el usuario
+
+        List<Libros> libros = repositorioLibros.findLibrosByIdiomas(idiomas); // Llamar al método del repositorio para buscar libros por idioma
+        if (libros.isEmpty()) {
+            System.out.println("No se encontraron libros en el idioma: " + idiomas);
+        } else {
+            System.out.println("\nLibros encontrados en " + idiomas + ":");
+            for (Libros libro : libros) {
+                System.out.println(
+                        "\n------------- LIBRO   --------------" +
+                                "\nTítulo: " + libro.getTitulo() +
+                                "\nAutor: " + libro.getAutor().getNombre() + // Asumiendo que es una cadena simple, ajusta según tu implementación
+                                "\nIdiomas: " + libro.getIdiomas() + // Asumiendo que es una lista, ajusta según tu implementación
+                                "\nNúmero de descargas: " + libro.getNumeroDeDescargas() +
+                                "\n--------------------------------------\n");
+            }
+        }
+    }
 }
 
